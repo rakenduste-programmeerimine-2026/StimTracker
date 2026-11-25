@@ -12,6 +12,30 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 - Kasuta ainult publishable võtit. **Secret / service_role võtit ei pane keegi koodi ega `.env.local`-i.**
 - Kliendid tehakse `@supabase/ssr` abil (`createBrowserClient` / `createServerClient`).
 
+## TypeScripti tüübid
+
+`src/types/database.types.ts` on **genereeritud** hostitud andmebaasist — käsitsi seda ei muudeta. Anna tüüp kliendile, siis kontrollib `npm run typecheck` veergude nimesid ja tüüpe:
+
+```ts
+import { createServerClient } from '@supabase/ssr';
+import type { Database } from '@/types/database.types';
+
+const supabase = createServerClient<Database>(url, key, { cookies });
+
+type IntakeRow = Database['public']['Tables']['intakes']['Row'];
+type NewIntakeRow = Database['public']['Tables']['intakes']['Insert'];
+type SettingsRow = Database['public']['Tables']['user_settings']['Row'];
+```
+
+`substance` on tüübis `string` (andmebaasis on see `text` + piirang). Kitsenda see `isSubstance()` abil (`src/lib/intake/substances.ts`).
+
+Uuesti genereerimine **pärast iga uut migratsiooni**, kui see on hostitud andmebaasi rakendatud (vajab `npx supabase link`-i, seega teeb seda Olaf):
+
+```bash
+npx supabase db push --remote
+npm run db:types
+```
+
 ## Mudel
 
 ```
