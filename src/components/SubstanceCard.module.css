@@ -1,80 +1,101 @@
 .card {
-  padding: 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.card + .card {
-  margin-top: 12px;
-}
-
-.caffeine {
-  border-top: 5px solid var(--caffeine);
+  --tone: var(--caffeine);
+  --tone-dim: var(--caffeine-dim);
+  min-width: 0;
 }
 
 .nicotine {
-  border-top: 5px solid var(--nicotine);
+  --tone: var(--nicotine);
+  --tone-dim: var(--nicotine-dim);
 }
 
-.title {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 0;
-}
-
-.stats dt {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.stats dd {
-  margin: 2px 0 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.bar {
-  height: 10px;
-  margin-top: 14px;
-  border-radius: 5px;
+.gauge {
+  position: relative;
+  height: 300px;
   overflow: hidden;
+  border-radius: 28px;
+  background: var(--tone-dim);
+  isolation: isolate;
 }
 
-.caffeine .bar {
-  background: var(--caffeine-soft);
-}
-
-.nicotine .bar {
-  background: var(--nicotine-soft);
-}
-
+/* The level itself. The bright top edge makes the "surface" readable. */
 .fill {
-  height: 100%;
-  border-radius: 5px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: linear-gradient(to top, var(--tone) 0%, color-mix(in srgb, var(--tone) 70%, transparent) 100%);
+  border-top: 3px solid color-mix(in srgb, var(--tone) 60%, white);
+  transition: height 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.caffeine .fill {
-  background: var(--caffeine);
+.reading {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px 0;
 }
 
-.nicotine .fill {
-  background: var(--nicotine);
+.value {
+  font-size: clamp(2.2rem, 11vw, 3.2rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  margin-left: 4px;
+  font-size: 0.4em;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .caption {
-  margin: 6px 0 0;
+  margin-top: 4px;
   font-size: 0.85rem;
   color: var(--muted);
 }
 
-.empty {
+.readingOnFill .value,
+.readingOnFill .caption {
+  color: var(--on-accent);
+}
+
+.name {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
   margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--tone);
+}
+
+.nameOnFill .name {
+  color: var(--on-accent);
+}
+
+.facts {
+  display: grid;
+  gap: 8px;
+  margin: 14px 4px 0;
+}
+
+.facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.facts dt {
   color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }

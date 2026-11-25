@@ -26,10 +26,10 @@ describe("TodayView", () => {
 
     const caffeine = screen.getByRole("article", { name: "Kofeiin" });
     // 160 mg 5 h ago -> 80 mg, plus 80 mg just now = 160 of 240 mg
-    expect(within(caffeine).getByText("240 mg")).toBeTruthy();
-    expect(within(caffeine).getByText("160 mg")).toBeTruthy();
+    expect(within(caffeine).getByText("240 mg")).toBeTruthy(); // taken today
+    expect(within(caffeine).getByRole("meter").textContent).toContain("160mg"); // in body now
     expect(within(caffeine).getByRole("meter").getAttribute("aria-valuenow")).toBe("67");
-    expect(within(caffeine).getByText(/2 korda/)).toBeTruthy();
+    expect(within(caffeine).getByText("2 korda")).toBeTruthy();
 
     const nicotine = screen.getByRole("article", { name: "Nikotiin" });
     expect(within(nicotine).getByText("Täna pole veel lisatud.")).toBeTruthy();

@@ -1,37 +1,50 @@
 .title {
-  margin: 0 0 4px;
-  font-size: 1.4rem;
+  margin: 12px 0 2px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
 }
 
 .date {
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: var(--muted);
 }
 
+.gauges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .empty {
-  padding: 20px 16px;
-  margin-bottom: 16px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--surface);
 }
 
 .empty p {
-  margin: 0 0 12px;
+  margin: 0;
 }
 
 .cta {
-  display: inline-block;
-  padding: 10px 18px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
   font-weight: 700;
   text-decoration: none;
 }
 
 .note {
-  margin: 20px 0 0;
+  margin: 28px 0 0;
+  max-width: 60ch;
   font-size: 0.8rem;
   color: var(--muted);
 }

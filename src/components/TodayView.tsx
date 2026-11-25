@@ -36,6 +36,12 @@ export default function TodayView(props: Props) {
         {now.toLocaleDateString("et-EE", { weekday: "long", day: "numeric", month: "long" })}
       </p>
 
+      <div className={styles.gauges}>
+        {summaries.map((summary) => (
+          <SubstanceCard key={summary.substance} summary={summary} />
+        ))}
+      </div>
+
       {nothingToday && (
         <div className={styles.empty}>
           <p>Täna pole veel midagi lisatud.</p>
@@ -44,10 +50,6 @@ export default function TodayView(props: Props) {
           </Link>
         </div>
       )}
-
-      {summaries.map((summary) => (
-        <SubstanceCard key={summary.substance} summary={summary} />
-      ))}
 
       <p className={styles.note}>
         Kehas oleva koguse hinnang põhineb keskmistel poolestusaegadel (kofeiin 5 h, nikotiin 2 h). See on
