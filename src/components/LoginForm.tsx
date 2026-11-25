@@ -4,6 +4,7 @@ import { useActionState, useEffect, useId, useState } from "react";
 import { signIn, signUp } from "@/app/login/actions";
 import { initialActionState, type ActionState } from "@/lib/action-state";
 import { resetIntakeStore } from "@/lib/intake/store";
+import { resetSettingsStore } from "@/lib/settings/store";
 import type { CredentialField } from "@/lib/auth/validation";
 import { MIN_PASSWORD_LENGTH } from "@/lib/auth/validation";
 import styles from "./LoginForm.module.css";
@@ -21,7 +22,10 @@ export default function LoginForm() {
 
   // Everyone passes this page between users (after logging out, before
   // logging in), so the previous user's intakes are forgotten here.
-  useEffect(() => resetIntakeStore(), []);
+  useEffect(() => {
+    resetIntakeStore();
+    resetSettingsStore();
+  }, []);
 
   return (
     <>
