@@ -26,3 +26,8 @@
   margin: 0 auto;
   padding: 8px 20px calc(var(--nav-height) + 40px);
 }
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
