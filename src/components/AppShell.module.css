@@ -1,0 +1,28 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 12px 20px;
+}
+
+.brand {
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.main {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 8px 20px calc(var(--nav-height) + 40px);
+}

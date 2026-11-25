@@ -1,0 +1,50 @@
+.title {
+  margin: 12px 0 2px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
+}
+
+.date {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.gauges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--surface);
+}
+
+.empty p {
+  margin: 0;
+}
+
+.cta {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.note {
+  margin: 28px 0 0;
+  max-width: 60ch;
+  font-size: 0.8rem;
+  color: var(--muted);
+}

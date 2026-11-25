@@ -1,0 +1,89 @@
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+
+* {
+  box-sizing: border-box;
+}
+
+/* Dark is the default theme. Light is opt-in via <html data-theme="light">. */
+:root {
+  color-scheme: dark;
+  --bg: #14121f;
+  --surface: #1e1b2e;
+  --surface-2: #2a2640;
+  --line: #36314f;
+  --text: #f2eef9;
+  --muted: #9c95b5;
+  --caffeine: #ffb547;
+  --caffeine-dim: rgba(255, 181, 71, 0.16);
+  --nicotine: #5fe3c0;
+  --nicotine-dim: rgba(95, 227, 192, 0.14);
+  --danger: #ff6b6b;
+  --on-accent: #14121f;
+  --focus: #c9b8ff;
+  --nav-height: 76px;
+  --page-width: 520px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f2fa;
+  --surface: #ffffff;
+  --surface-2: #ebe7f5;
+  --line: #ddd7ec;
+  --text: #1c1830;
+  --muted: #6a6382;
+  --caffeine: #c27400;
+  --caffeine-dim: rgba(194, 116, 0, 0.13);
+  --nicotine: #0e8f71;
+  --nicotine-dim: rgba(14, 143, 113, 0.12);
+  --danger: #c62828;
+  --on-accent: #ffffff;
+  --focus: #5b3fd6;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

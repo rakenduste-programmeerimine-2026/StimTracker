@@ -1,0 +1,105 @@
+.form {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--surface);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend,
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+/* Segmented control: the chosen substance takes its own colour. */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.choice input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.choice:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.caffeine:has(input:checked) {
+  background: var(--caffeine);
+  color: var(--on-accent);
+}
+
+.nicotine:has(input:checked) {
+  background: var(--nicotine);
+  color: var(--on-accent);
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.submit {
+  min-height: 52px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 750;
+  cursor: pointer;
+}

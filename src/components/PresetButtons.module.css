@@ -1,0 +1,82 @@
+.group + .group {
+  margin-top: 22px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.heading::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+
+.caffeine {
+  --tone: var(--caffeine);
+  --tone-dim: var(--caffeine-dim);
+}
+
+.nicotine {
+  --tone: var(--nicotine);
+  --tone-dim: var(--nicotine-dim);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.button:hover {
+  border-color: var(--line);
+}
+
+.button:active {
+  transform: scale(0.97);
+  background: var(--tone-dim);
+}
+
+.label {
+  font-weight: 650;
+}
+
+.amount {
+  margin-top: auto;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tone);
+}
+
+.unit {
+  margin-left: 2px;
+  font-size: 0.6em;
+  font-weight: 600;
+}
+
+.size {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
