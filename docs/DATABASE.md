@@ -57,7 +57,7 @@ auth.users 1─1 user_settings   (rida võib puududa = limiite pole)
 | label | text | 1–60 märki, nt „Espresso“ |
 | created_at | timestamptz | määrab andmebaas; kliendi väärtust eiratakse |
 
-Rakenduse tüüp `Intake` (`src/lib/intake/types.ts`) on sama kuju camelCase'is: `amount_mg` → `amountMg`, `taken_at` → `takenAt`.
+Rakenduse tüüp `Intake` (`src/lib/intake/types.ts`) on sama kuju camelCase'is: `amount_mg` → `amountMg`, `taken_at` → `takenAt`. Teisendus mõlemas suunas on failis `src/lib/intake/rows.ts`, mille rea tüübid tulevad genereeritud failist.
 
 ### `user_settings`
 
@@ -88,7 +88,7 @@ RLS-i ei pea koodis üle kontrollima: võõrad read lihtsalt ei tule päringus k
 | `23514` | piirang ei sobi (aine, kogus, nimetus või tulevikus olev aeg) |
 | `23502` | kohustuslik väli puudub |
 
-Toores andmebaasi viga logitakse serveris, kasutajale näidatakse eestikeelset teadet (vt `src/lib/intake/validation.ts`).
+Toores andmebaasi viga logitakse serveris, kasutajale näidatakse eestikeelset teadet (vt `intakeDbErrorMessage` failis `src/lib/intake/results.ts`).
 
 ## Valmis päringud
 

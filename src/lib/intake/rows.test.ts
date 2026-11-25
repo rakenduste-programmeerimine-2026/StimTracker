@@ -9,6 +9,10 @@ const row: IntakeRow = {
   label: "Kohv",
 };
 
+// The generated type says number, but the conversion must survive whatever
+// actually arrives.
+const withAmount = (amount: unknown) => ({ ...row, amount_mg: amount as number });
+
 describe("rowToIntake", () => {
   it("converts a database row to the app type", () => {
     expect(rowToIntake(row)).toEqual({
@@ -21,12 +25,12 @@ describe("rowToIntake", () => {
   });
 
   it("reads a numeric amount that arrives as text", () => {
-    expect(rowToIntake({ ...row, amount_mg: "1.5" })?.amountMg).toBe(1.5);
+    expect(rowToIntake(withAmount("1.5"))?.amountMg).toBe(1.5);
   });
 
   it("drops rows the app cannot show", () => {
     expect(rowToIntake({ ...row, substance: "alcohol" })).toBeNull();
-    expect(rowToIntake({ ...row, amount_mg: "lots" })).toBeNull();
+    expect(rowToIntake(withAmount("lots"))).toBeNull();
     expect(rowToIntake({ ...row, taken_at: "yesterday" })).toBeNull();
   });
 

@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { readSupabaseEnv } from "@/lib/supabase/env";
+import type { Database } from "@/types/database.types";
 
 // Refreshes the Supabase session on every request, so Server Components
 // and Server Actions always see a valid sign-in. Pages are not protected
@@ -13,7 +14,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   const env = readSupabaseEnv();
   if (!env) return response;
 
-  const supabase = createServerClient(env.url, env.publishableKey, {
+  const supabase = createServerClient<Database>(env.url, env.publishableKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

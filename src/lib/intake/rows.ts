@@ -1,34 +1,29 @@
 import { isSubstance } from "@/lib/intake/substances";
 import type { Intake } from "@/lib/intake/types";
 import type { ValidIntake } from "@/lib/intake/validation";
+import type { Database } from "@/types/database.types";
 
 // Conversion between the `intakes` table (snake_case, see docs/DATABASE.md)
-// and the app's Intake type (camelCase).
+// and the app's Intake type (camelCase). The row shapes come from the
+// generated database types, so a renamed or retyped column fails typecheck.
 
-// The columns the app reads. The generated Row type has these and more, so
+type IntakesTable = Database["public"]["Tables"]["intakes"];
+
+// The columns the app reads. The full generated Row has these and more, so
 // it can be passed in as it is.
-export type IntakeRow = {
-  id: string;
-  substance: string;
-  amount_mg: number | string;
-  taken_at: string;
-  label: string;
-};
+export type IntakeRow = Pick<IntakesTable["Row"], "id" | "substance" | "amount_mg" | "taken_at" | "label">;
 
 // What the app sends on insert. user_id and created_at are filled in by the
-// database, so they are never sent.
-export type IntakeInsert = {
-  substance: string;
-  amount_mg: number;
-  taken_at: string;
-  label: string;
-};
+// database, so they are never sent. taken_at is always sent, even though the
+// table has a default.
+export type IntakeInsert = Required<Pick<IntakesTable["Insert"], "substance" | "amount_mg" | "taken_at" | "label">>;
 
 export const INTAKE_COLUMNS = "id, substance, amount_mg, taken_at, label";
 
 // A row the app cannot show (unknown substance, broken amount or time)
 // becomes null, so one bad row does not break the whole list.
 export function rowToIntake(row: IntakeRow): Intake | null {
+  // Typed as number, but checked anyway: a broken row must not break the list.
   const amountMg = Number(row.amount_mg);
   const takenAt = new Date(row.taken_at);
   if (!isSubstance(row.substance) || !Number.isFinite(amountMg) || Number.isNaN(takenAt.getTime())) {

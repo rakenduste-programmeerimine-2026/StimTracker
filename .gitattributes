@@ -1,0 +1,13 @@
+# Text files are stored with LF on every OS, so a Windows editor cannot turn
+# a whole file into a CRLF diff.
+* text=auto eol=lf
+
+# Binary files: never touch their bytes.
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
