@@ -1,0 +1,52 @@
+.group + .group {
+  margin-top: 16px;
+}
+
+.heading {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.caffeine {
+  border-left: 4px solid var(--caffeine);
+}
+
+.nicotine {
+  border-left: 4px solid var(--nicotine);
+}
+
+.label {
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
