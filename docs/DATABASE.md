@@ -12,10 +12,35 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 - Kasuta ainult publishable võtit. **Secret / service_role võtit ei pane keegi koodi ega `.env.local`-i.**
 - Kliendid tehakse `@supabase/ssr` abil (`createBrowserClient` / `createServerClient`).
 
+## TypeScripti tüübid
+
+`src/types/database.types.ts` on **genereeritud** hostitud andmebaasist — käsitsi seda ei muudeta. Anna tüüp kliendile, siis kontrollib `npm run typecheck` veergude nimesid ja tüüpe:
+
+```ts
+import { createServerClient } from '@supabase/ssr';
+import type { Database } from '@/types/database.types';
+
+const supabase = createServerClient<Database>(url, key, { cookies });
+
+type IntakeRow = Database['public']['Tables']['intakes']['Row'];
+type NewIntakeRow = Database['public']['Tables']['intakes']['Insert'];
+type SettingsRow = Database['public']['Tables']['user_settings']['Row'];
+```
+
+`substance` on tüübis `string` (andmebaasis on see `text` + piirang). Kitsenda see `isSubstance()` abil (`src/lib/intake/substances.ts`).
+
+Uuesti genereerimine **pärast iga uut migratsiooni**, kui see on hostitud andmebaasi rakendatud (vajab `npx supabase link`-i, seega teeb seda Olaf):
+
+```bash
+npx supabase db push --remote
+npm run db:types
+```
+
 ## Mudel
 
 ```
 auth.users 1─* intakes
+auth.users 1─1 user_settings   (rida võib puududa = limiite pole)
 ```
 
 ### `intakes`
@@ -34,13 +59,24 @@ auth.users 1─* intakes
 
 Rakenduse tüüp `Intake` (`src/lib/intake/types.ts`) on sama kuju camelCase'is: `amount_mg` → `amountMg`, `taken_at` → `takenAt`.
 
+### `user_settings`
+
+Kasutaja seaded, üks rida kasutaja kohta. Praegu ainult valikulised päevalimiidid. **Rida võib puududa** — siis limiite pole. Ridu ei looda registreerumisel; rakendus salvestab upsert'iga.
+
+| Veerg | Tüüp | Märkus |
+| --- | --- | --- |
+| user_id | uuid | PK; täidetakse ise (`auth.uid()`); kliendi väärtust eiratakse, omanik ei muutu |
+| caffeine_limit_mg | numeric \| null | päevalimiit; `null` = pole; muidu 1–2000 |
+| nicotine_limit_mg | numeric \| null | päevalimiit; `null` = pole; muidu 1–200 |
+| updated_at | timestamptz | määrab andmebaas |
+
 ## Õigused (RLS)
 
-| Kes | Mida saab |
-| --- | --- |
-| sisselogimata (`anon`) | mitte midagi (viga `42501`) |
-| sisseloginud kasutaja | loeb, lisab ja kustutab **ainult enda** ridu |
-| keegi | ei saa ridu muuta (`update` annab vea `42501`) — vale rida kustutatakse ja lisatakse uuesti |
+| Tabel | Kes | Mida saab |
+| --- | --- | --- |
+| kõik | sisselogimata (`anon`) | mitte midagi (viga `42501`) |
+| intakes | sisseloginud kasutaja | loeb, lisab ja kustutab **ainult enda** ridu; muuta ei saa (`42501`) — vale rida kustutatakse ja lisatakse uuesti |
+| user_settings | sisseloginud kasutaja | loeb, loob ja muudab **ainult enda** rida; kustutada ei saa (`42501`) — limiidi eemaldamiseks pane see `null`-iks |
 
 RLS-i ei pea koodis üle kontrollima: võõrad read lihtsalt ei tule päringus kaasa ja võõra rea kustutamine ei mõjuta midagi.
 
@@ -76,6 +112,19 @@ const { data } = await supabase
 await supabase.from('intakes').delete().eq('id', intakeId);
 
 // Nädala statistika: sama päring 7 päeva vahemikuga, summad arvutatakse rakenduses
+
+// Päevalimiidid (null → rida puudub, limiite pole)
+const { data: settings } = await supabase
+  .from('user_settings')
+  .select('caffeine_limit_mg, nicotine_limit_mg')
+  .maybeSingle();
+
+// Limiitide salvestamine (user_id täitub ise; saada ainult veerud, mida muudad)
+await supabase
+  .from('user_settings')
+  .upsert({ caffeine_limit_mg: 400, nicotine_limit_mg: null }, { onConflict: 'user_id' })
+  .select()
+  .single();
 ```
 
 **Ajavöönd:** „täna“ algab kasutaja kohalikul keskööl. Server (nt Vercel) töötab UTC-s, seega päeva algust ei arvutata serveris `new Date()` põhjal — see tuleb brauserist (vt `startOfLocalDay` failis `src/lib/intake/today.ts`).
@@ -93,7 +142,7 @@ npx supabase stop
 
 `npx supabase start` näitab kohalikku URL-i ja publishable võtit — need lähevad kohaliku arenduse ajal `.env.local`-i.
 
-Seed'i testkasutaja (ainult kohalikus andmebaasis): `test@example.com` / `password123`, koos tänase ja eelmiste päevade tarbimistega.
+Seed'i testkasutaja (ainult kohalikus andmebaasis): `test@example.com` / `password123`, koos tänase ja eelmiste päevade tarbimistega ning kofeiini päevalimiidiga 400 mg (nikotiinil limiiti pole).
 
 ## Muudatuse soov
 
