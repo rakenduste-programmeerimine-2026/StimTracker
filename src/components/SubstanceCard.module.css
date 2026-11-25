@@ -1,0 +1,80 @@
+.card {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.card + .card {
+  margin-top: 12px;
+}
+
+.caffeine {
+  border-top: 5px solid var(--caffeine);
+}
+
+.nicotine {
+  border-top: 5px solid var(--nicotine);
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+}
+
+.stats dt {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 2px 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.bar {
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.caffeine .bar {
+  background: var(--caffeine-soft);
+}
+
+.nicotine .bar {
+  background: var(--nicotine-soft);
+}
+
+.fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.caffeine .fill {
+  background: var(--caffeine);
+}
+
+.nicotine .fill {
+  background: var(--nicotine);
+}
+
+.caption {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+}
