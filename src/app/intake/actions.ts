@@ -1,13 +1,14 @@
 "use server";
 
-import { INVALID_INPUT, parseIntakeId, parseNewIntake } from "@/lib/intake/input";
+import { INVALID_INPUT, parseIntakeId, parseNewIntake, parseTimeRange } from "@/lib/intake/input";
 import {
   NOT_FOUND,
   intakeDbErrorMessage,
   type AddIntakeResult,
   type DeleteIntakeResult,
+  type ListIntakesResult,
 } from "@/lib/intake/results";
-import { INTAKE_COLUMNS, rowToIntake, toInsertRow } from "@/lib/intake/rows";
+import { INTAKE_COLUMNS, rowToIntake, rowsToIntakes, toInsertRow } from "@/lib/intake/rows";
 import type { NewIntake } from "@/lib/intake/types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -45,4 +46,24 @@ export async function deleteIntake(id: string): Promise<DeleteIntakeResult> {
   // look like zero deleted rows.
   if (!data || data.length === 0) return { ok: false, message: NOT_FOUND };
   return { ok: true };
+}
+
+// The user's intakes taken between `from` and `to` (ISO strings with a time
+// zone, both included), newest first. The browser picks the range, because
+// "today" starts at the user's own midnight (see startOfLocalDay in
+// src/lib/intake/today.ts); the server runs in UTC. At most 35 days.
+export async function listIntakes(from: string, to: string): Promise<ListIntakesResult> {
+  const range = parseTimeRange(from, to);
+  if (!range) return { ok: false, message: INVALID_INPUT };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("intakes")
+    .select(INTAKE_COLUMNS)
+    .gte("taken_at", range.from.toISOString())
+    .lte("taken_at", range.to.toISOString())
+    .order("taken_at", { ascending: false });
+  if (error) return { ok: false, message: intakeDbErrorMessage(error, "list") };
+
+  return { ok: true, intakes: rowsToIntakes(data ?? []) };
 }

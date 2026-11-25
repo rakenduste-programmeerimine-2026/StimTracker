@@ -121,3 +121,55 @@ describe("deleteIntake", () => {
     expect(result).toEqual({ ok: false, message: "Salvestamine ebaõnnestus. Proovi uuesti." });
   });
 });
+
+describe("listIntakes", () => {
+  const from = "2026-11-24T22:00:00.000Z";
+  const to = "2026-11-25T15:00:00.000Z";
+
+  it("queries the range newest first and converts the rows", async () => {
+    db.results.push({ data: [storedRow], error: null });
+
+    const result = await actions.listIntakes(from, to);
+
+    expect(result).toEqual({ ok: true, intakes: [{ ...coffee, id: ID }] });
+    const [q] = db.queries;
+    expect(call(q, "gte")?.args).toEqual(["taken_at", from]);
+    expect(call(q, "lte")?.args).toEqual(["taken_at", to]);
+    expect(call(q, "order")?.args).toEqual(["taken_at", { ascending: false }]);
+  });
+
+  it("accepts a range given in the user's own time zone", async () => {
+    await actions.listIntakes("2026-11-25T00:00:00+02:00", to);
+
+    expect(call(db.queries[0], "gte")?.args).toEqual(["taken_at", "2026-11-24T22:00:00.000Z"]);
+  });
+
+  it("skips rows the app cannot show", async () => {
+    db.results.push({ data: [storedRow, { ...storedRow, id: "x", substance: "alcohol" }], error: null });
+
+    const result = await actions.listIntakes(from, to);
+
+    expect(result.ok && result.intakes.map((intake) => intake.id)).toEqual([ID]);
+  });
+
+  it("returns an empty list when there is nothing", async () => {
+    db.results.push({ data: [], error: null });
+
+    expect(await actions.listIntakes(from, to)).toEqual({ ok: true, intakes: [] });
+  });
+
+  it("rejects a bad or too long range without touching the database", async () => {
+    expect((await actions.listIntakes(to, from)).ok).toBe(false);
+    expect((await actions.listIntakes("2026-01-01T00:00:00.000Z", to)).ok).toBe(false);
+    expect((await actions.listIntakes("2026-11-25T00:00", to)).ok).toBe(false);
+    expect(db.queries).toHaveLength(0);
+  });
+
+  it("asks to sign in when the user has no session", async () => {
+    db.results.push({ data: null, error: { code: "42501", message: "permission denied for table intakes" } });
+
+    const result = await actions.listIntakes(from, to);
+
+    expect(result).toEqual({ ok: false, message: "Logi sisse, et tarbimisi salvestada ja näha." });
+  });
+});
