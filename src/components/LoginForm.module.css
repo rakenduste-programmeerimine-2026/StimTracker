@@ -1,0 +1,98 @@
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+
+.mode {
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font-weight: 650;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.mode[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.alert {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
+.notice {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--nicotine-dim);
+}
+
+.submit {
+  min-height: 54px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--caffeine), var(--nicotine));
+  color: var(--on-accent);
+  font-weight: 750;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
