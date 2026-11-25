@@ -39,3 +39,7 @@ insert into public.intakes (user_id, substance, amount_mg, taken_at, label) valu
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'nicotine', 1,  now() - interval '2 days',   'Sigaret'),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'caffeine', 47, now() - interval '3 days',   'Must tee'),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'nicotine', 1,  now() - interval '4 days',   'Vape');
+
+-- Caffeine limit set, nicotine limit not set, so both cases show in the UI.
+insert into public.user_settings (user_id, caffeine_limit_mg, nicotine_limit_mg) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 400, null);
