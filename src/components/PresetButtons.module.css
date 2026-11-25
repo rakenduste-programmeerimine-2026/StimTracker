@@ -1,52 +1,82 @@
 .group + .group {
-  margin-top: 16px;
+  margin-top: 22px;
 }
 
 .heading {
-  margin: 0 0 8px;
-  font-size: 0.95rem;
-  color: var(--muted);
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.heading::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+
+.caffeine {
+  --tone: var(--caffeine);
+  --tone-dim: var(--caffeine-dim);
+}
+
+.nicotine {
+  --tone: var(--nicotine);
+  --tone-dim: var(--nicotine-dim);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
 }
 
 .button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  min-height: 64px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 20px;
   background: var(--surface);
-  color: var(--text);
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.button:hover {
+  border-color: var(--line);
 }
 
 .button:active {
-  transform: scale(0.98);
-}
-
-.caffeine {
-  border-left: 4px solid var(--caffeine);
-}
-
-.nicotine {
-  border-left: 4px solid var(--nicotine);
+  transform: scale(0.97);
+  background: var(--tone-dim);
 }
 
 .label {
+  font-weight: 650;
+}
+
+.amount {
+  margin-top: auto;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tone);
+}
+
+.unit {
+  margin-left: 2px;
+  font-size: 0.6em;
   font-weight: 600;
 }
 
-.meta {
+.size {
   font-size: 0.8rem;
   color: var(--muted);
 }
