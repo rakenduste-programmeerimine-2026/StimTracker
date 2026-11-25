@@ -58,7 +58,9 @@ export default function SettingsView() {
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate aria-label="Päevalimiidid">
-        {status === "error" && loadError && (
+        {/* After a save, its answer replaces the loading error, so the same
+            message is never shown twice. */}
+        {status === "error" && loadError && !message && (
           <p className={styles.alert} role="alert">
             {loadError}
           </p>

@@ -70,6 +70,8 @@ describe("SettingsView", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("Päevalimiidi salvestamine pole veel valmis.");
     await userEvent.type(caffeineInput(), "400");
     await userEvent.click(screen.getByRole("button", { name: "Salvesta" }));
-    await waitFor(() => expect(screen.getAllByRole("alert")).toHaveLength(2));
+    // The save answer replaces the loading error: one message, not two.
+    await waitFor(() => expect(actions.saveSettings).toHaveBeenCalled());
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
   });
 });
