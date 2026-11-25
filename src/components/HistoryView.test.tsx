@@ -25,7 +25,10 @@ async function setup(rows: Intake[]) {
 }
 
 beforeEach(() => resetIntakeStore());
-afterEach(cleanup);
+afterEach(() => {
+  vi.useRealTimers();
+  cleanup();
+});
 
 describe("HistoryView", () => {
   it("shows an empty message when nothing was added today", async () => {
@@ -63,6 +66,9 @@ describe("HistoryView", () => {
   });
 
   it("offers a retry when loading fails", async () => {
+    // "Proovi uuesti" loads with the real clock, so pin it to the test's day.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(now);
     db = resetFakeIntakeActions([morning]);
     resetIntakeStore();
     db.failNext("throw");
@@ -72,5 +78,6 @@ describe("HistoryView", () => {
     expect(screen.getByRole("alert").textContent).toContain("Ühendus serveriga katkes");
     await userEvent.click(screen.getByRole("button", { name: "Proovi uuesti" }));
     expect(await screen.findByText("Hommikukohv")).toBeTruthy();
+    vi.useRealTimers();
   });
 });
