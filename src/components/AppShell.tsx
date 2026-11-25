@@ -1,4 +1,5 @@
 import BottomNav from "@/components/BottomNav";
+import IntakeErrorBanner from "@/components/IntakeErrorBanner";
 import SignOutButton from "@/components/SignOutButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import styles from "./AppShell.module.css";
@@ -15,7 +16,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className={styles.main}>{children}</main>
+      <main className={styles.main}>
+        <IntakeErrorBanner />
+        {children}
+      </main>
       <BottomNav />
     </>
   );

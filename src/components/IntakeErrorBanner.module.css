@@ -1,0 +1,27 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--danger);
+  color: #fff;
+}
+
+.banner p {
+  margin: 0;
+}
+
+.banner button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  background: none;
+  color: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
