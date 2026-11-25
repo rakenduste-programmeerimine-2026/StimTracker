@@ -48,13 +48,15 @@ export default function HistoryView(props: Props) {
           {today.map((intake) => {
             const description = `${intake.label}, ${formatMg(intake.amountMg)} kell ${formatTime(intake.takenAt)}`;
             return (
-              <li key={intake.id} className={styles.item}>
-                <span className={`${styles.dot} ${styles[intake.substance]}`} aria-hidden="true" />
+              <li
+                key={intake.id}
+                className={intake.substance === "nicotine" ? `${styles.item} ${styles.nicotineItem}` : styles.item}
+              >
                 <span className={styles.time}>{formatTime(intake.takenAt)}</span>
                 <span className={styles.what}>
                   <span className={styles.label}>{intake.label}</span>
                   <span className={styles.amount}>
-                    {SUBSTANCE_LABEL[intake.substance]} · {formatMg(intake.amountMg)}
+                    {formatMg(intake.amountMg)} {SUBSTANCE_LABEL[intake.substance].toLowerCase()}
                   </span>
                 </span>
                 <span className={styles.actions}>
