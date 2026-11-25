@@ -20,12 +20,14 @@ export default function AddIntakeView() {
     return () => clearTimeout(timer);
   }, [lastAdded]);
 
-  function add(input: NewIntake) {
-    setLastAdded(addIntake(input));
+  async function add(input: NewIntake) {
+    const saved = await addIntake(input);
+    // On failure the store shows an error banner instead.
+    if (saved) setLastAdded(saved);
   }
 
   function undo() {
-    if (lastAdded) removeIntake(lastAdded.id);
+    if (lastAdded) void removeIntake(lastAdded.id);
     setLastAdded(null);
   }
 
@@ -59,7 +61,7 @@ export default function AddIntakeView() {
         </button>
         {showForm && (
           <div id="manual-intake" className={styles.formWrap}>
-            <IntakeForm onSubmit={(intake) => add({ ...intake, takenAt: intake.takenAt.toISOString() })} />
+            <IntakeForm onSubmit={(intake) => void add({ ...intake, takenAt: intake.takenAt.toISOString() })} />
           </div>
         )}
       </div>

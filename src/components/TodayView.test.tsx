@@ -1,5 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+vi.mock("@/app/intake/actions", async () => (await import("@/test/mockIntakeActions")).mockedActions);
+
 import TodayView from "@/components/TodayView";
 import type { Intake } from "@/lib/intake/types";
 

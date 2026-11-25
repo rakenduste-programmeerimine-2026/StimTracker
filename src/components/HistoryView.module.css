@@ -84,3 +84,35 @@
 .empty {
   color: var(--muted);
 }
+
+.saving {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.loadError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
+.loadError p {
+  margin: 0;
+}
+
+.loadError button {
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--danger);
+  color: #fff;
+  font-weight: 650;
+  cursor: pointer;
+}
