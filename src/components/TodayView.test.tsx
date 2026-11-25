@@ -42,4 +42,31 @@ describe("TodayView", () => {
     render(<TodayView intakes={[]} now={now} />);
     expect(screen.getByText(/ei ole meditsiiniline nõuanne/)).toBeTruthy();
   });
+
+  it("shows how far today's intake is from the daily limit", () => {
+    render(
+      <TodayView
+        intakes={[intake("caffeine", 160, 10), intake("caffeine", 200, 14), intake("nicotine", 3, 12)]}
+        now={now}
+        settings={{ caffeineLimitMg: 400, nicotineLimitMg: 20 }}
+      />,
+    );
+
+    const caffeine = screen.getByRole("article", { name: "Kofeiin" });
+    const limit = within(caffeine).getByRole("meter", { name: "Kofeiin: päevalimiidist kasutatud" });
+    expect(limit.getAttribute("aria-valuetext")).toBe("360 / 400 mg");
+    expect(within(caffeine).getByText("40 mg jäänud")).toBeTruthy();
+
+    const nicotine = screen.getByRole("article", { name: "Nikotiin" });
+    expect(within(nicotine).getByText("17 mg jäänud")).toBeTruthy();
+  });
+
+  it("says how much the limit was exceeded", () => {
+    render(<TodayView intakes={[intake("caffeine", 450, 10)]} now={now} settings={{ caffeineLimitMg: 400, nicotineLimitMg: null }} />);
+    const caffeine = screen.getByRole("article", { name: "Kofeiin" });
+    expect(within(caffeine).getByText("50 mg üle limiidi")).toBeTruthy();
+    // No nicotine limit, no limit bar
+    const nicotine = screen.getByRole("article", { name: "Nikotiin" });
+    expect(within(nicotine).queryByRole("meter", { name: /päevalimiidist/ })).toBeNull();
+  });
 });

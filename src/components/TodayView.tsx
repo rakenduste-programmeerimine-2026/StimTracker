@@ -6,16 +6,21 @@ import { useNow } from "@/lib/hooks/useNow";
 import { loadIntakes, useIntakes } from "@/lib/intake/store";
 import { summarizeToday } from "@/lib/intake/today";
 import type { Intake } from "@/lib/intake/types";
+import { useSettings } from "@/lib/settings/store";
+import { limitFor, type Settings } from "@/lib/settings/types";
 import styles from "./TodayView.module.css";
 
 type Props = {
   // Injected in tests; the page uses the live store and clock.
   intakes?: readonly Intake[];
   now?: Date;
+  settings?: Settings;
 };
 
 export default function TodayView(props: Props) {
   const store = useIntakes();
+  const savedSettings = useSettings().settings;
+  const settings = props.settings ?? savedSettings;
   const liveNow = useNow();
   const intakes = props.intakes ?? store.intakes;
   const status = props.intakes ? "ready" : store.status;
@@ -54,7 +59,7 @@ export default function TodayView(props: Props) {
 
       <div className={styles.gauges}>
         {summaries.map((summary) => (
-          <SubstanceCard key={summary.substance} summary={summary} />
+          <SubstanceCard key={summary.substance} summary={summary} limitMg={limitFor(settings, summary.substance)} />
         ))}
       </div>
 
