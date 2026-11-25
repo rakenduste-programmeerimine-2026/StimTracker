@@ -3,7 +3,7 @@
 import Link from "next/link";
 import SubstanceCard from "@/components/SubstanceCard";
 import { useNow } from "@/lib/hooks/useNow";
-import { useIntakes } from "@/lib/intake/store";
+import { loadIntakes, useIntakes } from "@/lib/intake/store";
 import { summarizeToday } from "@/lib/intake/today";
 import type { Intake } from "@/lib/intake/types";
 import styles from "./TodayView.module.css";
@@ -15,9 +15,10 @@ type Props = {
 };
 
 export default function TodayView(props: Props) {
-  const storeIntakes = useIntakes();
+  const store = useIntakes();
   const liveNow = useNow();
-  const intakes = props.intakes ?? storeIntakes;
+  const intakes = props.intakes ?? store.intakes;
+  const status = props.intakes ? "ready" : store.status;
   const now = props.now ?? liveNow;
 
   // Until the clock is known on the client, render only the heading so the
@@ -27,7 +28,7 @@ export default function TodayView(props: Props) {
   }
 
   const summaries = summarizeToday(intakes, now);
-  const nothingToday = summaries.every((s) => s.count === 0);
+  const nothingToday = status === "ready" && summaries.every((s) => s.count === 0);
 
   return (
     <>
@@ -35,6 +36,21 @@ export default function TodayView(props: Props) {
       <p className={styles.date}>
         {now.toLocaleDateString("et-EE", { weekday: "long", day: "numeric", month: "long" })}
       </p>
+
+      {(status === "idle" || status === "loading") && (
+        <p className={styles.status} role="status">
+          Laen tänaseid kirjeid…
+        </p>
+      )}
+
+      {status === "error" && (
+        <div className={styles.loadError} role="alert">
+          <p>{store.error}</p>
+          <button type="button" onClick={() => void loadIntakes()}>
+            Proovi uuesti
+          </button>
+        </div>
+      )}
 
       <div className={styles.gauges}>
         {summaries.map((summary) => (

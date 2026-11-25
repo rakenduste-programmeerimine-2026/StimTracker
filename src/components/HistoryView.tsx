@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useNow } from "@/lib/hooks/useNow";
 import { formatMg, SUBSTANCE_LABEL } from "@/lib/intake/labels";
-import { removeIntake, useIntakes } from "@/lib/intake/store";
+import { isPending, loadIntakes, removeIntake, useIntakes } from "@/lib/intake/store";
 import { todaysIntakes } from "@/lib/intake/today";
 import styles from "./HistoryView.module.css";
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function HistoryView(props: Props) {
-  const intakes = useIntakes();
+  const { intakes, status, error } = useIntakes();
   const liveNow = useNow();
   const now = props.now ?? liveNow;
   // Id of the intake whose delete is waiting for confirmation.
@@ -31,7 +31,7 @@ export default function HistoryView(props: Props) {
   const today = todaysIntakes(intakes, now);
 
   function confirmDelete(id: string) {
-    removeIntake(id);
+    void removeIntake(id);
     setConfirmingId(null);
   }
 
@@ -39,7 +39,18 @@ export default function HistoryView(props: Props) {
     <>
       <h1 className={styles.title}>Ajalugu</h1>
 
-      {today.length === 0 ? (
+      {status === "error" ? (
+        <div className={styles.loadError} role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={() => void loadIntakes()}>
+            Proovi uuesti
+          </button>
+        </div>
+      ) : status !== "ready" ? (
+        <p className={styles.empty} role="status">
+          Laen tänaseid kirjeid…
+        </p>
+      ) : today.length === 0 ? (
         <p className={styles.empty}>
           Täna pole veel midagi lisatud. <Link href="/add">Lisa</Link>
         </p>
@@ -60,7 +71,9 @@ export default function HistoryView(props: Props) {
                   </span>
                 </span>
                 <span className={styles.actions}>
-                  {confirmingId === intake.id ? (
+                  {isPending(intake.id) ? (
+                    <span className={styles.saving}>Salvestan…</span>
+                  ) : confirmingId === intake.id ? (
                     <>
                       <button
                         type="button"

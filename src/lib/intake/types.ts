@@ -1,7 +1,7 @@
 import type { Substance } from "@/lib/intake/substances";
 
-// One logged dose. Same shape the Supabase table will have, so the mock
-// store can later be swapped for the database without touching the UI.
+// One logged dose, as the app uses it. The Supabase `intakes` table has the
+// same fields in snake_case (see src/lib/intake/rows.ts).
 export type Intake = {
   id: string;
   substance: Substance;

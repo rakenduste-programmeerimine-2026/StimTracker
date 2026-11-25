@@ -1,85 +1,158 @@
-import { useSyncExternalStore } from "react";
-import { isSubstance } from "@/lib/intake/substances";
+import { useEffect, useSyncExternalStore } from "react";
+import { addIntake as saveIntake, deleteIntake, listIntakes } from "@/app/intake/actions";
+import { NOT_FOUND, type Failure } from "@/lib/intake/results";
+import { startOfLocalDay } from "@/lib/intake/today";
 import type { Intake, NewIntake } from "@/lib/intake/types";
 
-// Mock data source until the Supabase table is ready: intakes are kept in
-// the browser's localStorage. The UI only uses useIntakes, addIntake and
-// removeIntake, so switching to Supabase means changing this file only.
+// The signed-in user's intakes for today, kept in memory for the pages.
+// Reading and writing goes through the backend's Server Actions
+// (src/app/intake/actions.ts); they talk to Supabase and return Estonian
+// messages, which are shown as they are.
+//
+// Adding and removing are optimistic: the screen changes at once and the
+// change is taken back with a message if the server refuses it.
 
-const STORAGE_KEY = "stimtracker.intakes.v1";
-const EMPTY: Intake[] = [];
+export type IntakeState = {
+  status: "idle" | "loading" | "ready" | "error";
+  intakes: readonly Intake[];
+  error: string | null;
+};
 
-let cache: Intake[] | null = null;
+const INITIAL: IntakeState = { status: "idle", intakes: [], error: null };
+// Shown when the request does not reach the server at all.
+export const OFFLINE_MESSAGE = "Ühendus serveriga katkes. Kontrolli internetiühendust ja proovi uuesti.";
+// The server allows a dose up to a minute in the future (phone clocks).
+const CLOCK_SLACK_MS = 60 * 1000;
+
+let state: IntakeState = INITIAL;
+let loadRequest = 0;
 const listeners = new Set<() => void>();
 
-function isIntake(value: unknown): value is Intake {
-  if (typeof value !== "object" || value === null) return false;
-  const v = value as Record<string, unknown>;
-  return (
-    typeof v.id === "string" &&
-    isSubstance(v.substance) &&
-    typeof v.amountMg === "number" &&
-    typeof v.takenAt === "string" &&
-    typeof v.label === "string"
-  );
-}
-
-function load(): Intake[] {
-  if (typeof window === "undefined") return EMPTY;
-  try {
-    const parsed: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
-    return Array.isArray(parsed) ? parsed.filter(isIntake) : EMPTY;
-  } catch {
-    return EMPTY;
-  }
-}
-
-function save(next: Intake[]) {
-  cache = next;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // Storage full or blocked (private mode): keep the in-memory copy.
-  }
+function setState(patch: Partial<IntakeState>) {
+  state = { ...state, ...patch };
   listeners.forEach((listener) => listener());
 }
 
-export function getIntakes(): Intake[] {
-  cache ??= load();
-  return cache;
+function byNewest(a: Intake, b: Intake) {
+  return b.takenAt.localeCompare(a.takenAt);
 }
 
-export function addIntake(input: NewIntake): Intake {
-  const intake: Intake = { ...input, id: crypto.randomUUID() };
-  save([...getIntakes(), intake]);
-  return intake;
+// The most specific message from a failed action: a field error if there
+// is one (e.g. "Kogus peab olema suurem kui 0."), otherwise the general one.
+function failureMessage(result: Failure): string {
+  const fieldMessage = result.fieldErrors && Object.values(result.fieldErrors).find(Boolean);
+  return fieldMessage ?? result.message;
 }
 
-export function removeIntake(id: string): void {
-  save(getIntakes().filter((intake) => intake.id !== id));
-}
-
-function onStorage(event: StorageEvent) {
-  if (event.key !== STORAGE_KEY) return;
-  cache = null;
-  listeners.forEach((listener) => listener());
+export function getIntakeState(): IntakeState {
+  return state;
 }
 
 export function subscribe(listener: () => void): () => void {
-  if (listeners.size === 0) window.addEventListener("storage", onStorage);
   listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-    if (listeners.size === 0) window.removeEventListener("storage", onStorage);
-  };
+  return () => listeners.delete(listener);
 }
 
-// All intakes, re-rendering when they change (also from another tab).
-export function useIntakes(): Intake[] {
-  return useSyncExternalStore(subscribe, getIntakes, () => EMPTY);
+export function isPending(id: string): boolean {
+  return id.startsWith("pending-");
 }
 
-// Only for tests: forget the in-memory copy so each test starts clean.
-export function resetIntakeStoreForTests(): void {
-  cache = null;
+// Loads today's intakes. "Today" starts at the user's own midnight, so the
+// browser sends the range (the server runs in UTC).
+export async function loadIntakes(now: Date = new Date()): Promise<void> {
+  const request = ++loadRequest;
+  setState({ status: state.status === "ready" ? "ready" : "loading" });
+
+  let result;
+  try {
+    result = await listIntakes(
+      startOfLocalDay(now).toISOString(),
+      new Date(now.getTime() + CLOCK_SLACK_MS).toISOString(),
+    );
+  } catch {
+    result = { ok: false as const, message: OFFLINE_MESSAGE };
+  }
+
+  // A newer load started meanwhile (e.g. after switching tabs): keep that one.
+  if (request !== loadRequest) return;
+
+  if (!result.ok) {
+    setState({ status: "error", error: failureMessage(result) });
+    return;
+  }
+  // Keep intakes that are still being saved; the list does not have them yet.
+  const pending = state.intakes.filter((i) => isPending(i.id));
+  setState({ status: "ready", intakes: [...result.intakes, ...pending].sort(byNewest), error: null });
+}
+
+// Saves a new intake. Returns the saved intake (with its id, for undo), or
+// null if saving failed; the error banner then says why.
+export async function addIntake(input: NewIntake): Promise<Intake | null> {
+  const tempId = `pending-${crypto.randomUUID()}`;
+  setState({ intakes: [...state.intakes, { ...input, id: tempId }].sort(byNewest), error: null });
+
+  let result;
+  try {
+    result = await saveIntake(input);
+  } catch {
+    result = { ok: false as const, message: OFFLINE_MESSAGE };
+  }
+
+  if (!result.ok) {
+    setState({ intakes: state.intakes.filter((i) => i.id !== tempId), error: failureMessage(result) });
+    return null;
+  }
+  const saved = result.intake;
+  setState({ intakes: state.intakes.map((i) => (i.id === tempId ? saved : i)) });
+  return saved;
+}
+
+// Deletes an intake. Returns false if the server refused.
+export async function removeIntake(id: string): Promise<boolean> {
+  // Still being saved: it has no database id yet.
+  if (isPending(id)) return false;
+  const removed = state.intakes.find((i) => i.id === id);
+  if (!removed) return true;
+  setState({ intakes: state.intakes.filter((i) => i.id !== id), error: null });
+
+  let result;
+  try {
+    result = await deleteIntake(id);
+  } catch {
+    result = { ok: false as const, message: OFFLINE_MESSAGE };
+  }
+
+  // Already gone (e.g. deleted on another device): that is what the user wanted.
+  if (result.ok || result.message === NOT_FOUND) return true;
+
+  setState({ intakes: [...state.intakes, removed].sort(byNewest), error: failureMessage(result) });
+  return false;
+}
+
+export function dismissIntakeError(): void {
+  setState({ error: null });
+}
+
+// Forget everything, so the next user who logs in on this device starts clean.
+export function resetIntakeStore(): void {
+  state = INITIAL;
+  loadRequest++;
+  listeners.forEach((listener) => listener());
+}
+
+// Today's intakes. Loads them on first use and again when the user comes
+// back to the tab, so changes from another device show up.
+export function useIntakes(): IntakeState {
+  const current = useSyncExternalStore(subscribe, getIntakeState, () => INITIAL);
+
+  useEffect(() => {
+    if (getIntakeState().status === "idle") void loadIntakes();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void loadIntakes();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
+
+  return current;
 }
