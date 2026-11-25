@@ -1,8 +1,3 @@
-export default function Home() {
-  return (
-    <main>
-      <h1>StimTracker</h1>
-      <p>Kofeiini ja nikotiini jälgija.</p>
-    </main>
-  );
+export default function TodayPage() {
+  return <h1>Täna</h1>;
 }
