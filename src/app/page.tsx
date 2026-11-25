@@ -1,3 +1,5 @@
+import TodayView from "@/components/TodayView";
+
 export default function TodayPage() {
-  return <h1>Täna</h1>;
+  return <TodayView />;
 }
