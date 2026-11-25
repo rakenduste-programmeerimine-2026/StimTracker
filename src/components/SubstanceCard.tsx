@@ -17,7 +17,8 @@ export default function SubstanceCard({ summary, limitMg = null }: Props) {
   const limit = limitStatus(takenMg, limitMg);
   const percent = remainingShare === null ? 0 : Math.round(remainingShare * 100);
   // Text that sits on top of the solid level switches to the contrast colour.
-  const gaugeClass = [styles.gauge, percent >= 72 && styles.readingOnFill, percent >= 14 && styles.nameOnFill]
+  // The reading is near the top, so only an almost full level covers it.
+  const gaugeClass = [styles.gauge, percent >= 92 && styles.readingOnFill, percent >= 70 && styles.captionOnFill, percent >= 14 && styles.nameOnFill]
     .filter(Boolean)
     .join(" ");
 

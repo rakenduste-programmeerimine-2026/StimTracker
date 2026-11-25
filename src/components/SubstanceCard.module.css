@@ -59,7 +59,7 @@
 }
 
 .readingOnFill .value,
-.readingOnFill .caption {
+.captionOnFill .caption {
   color: var(--on-accent);
 }
 
@@ -121,8 +121,8 @@
 
 .limitText {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column-reverse;
+  gap: 2px;
   margin: 6px 0 0;
   font-size: 0.85rem;
   color: var(--muted);
