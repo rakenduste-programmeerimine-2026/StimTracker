@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import HistoryView from "@/components/HistoryView";
 
 export const metadata: Metadata = { title: "Ajalugu · StimTracker" };
 
 export default function HistoryPage() {
-  return <h1>Ajalugu</h1>;
+  return <HistoryView />;
 }

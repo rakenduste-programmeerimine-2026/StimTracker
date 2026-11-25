@@ -1,0 +1,97 @@
+.title {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px;
+}
+
+.item + .item {
+  border-top: 1px solid var(--border);
+}
+
+.dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.caffeine {
+  background: var(--caffeine);
+}
+
+.nicotine {
+  background: var(--nicotine);
+}
+
+.time {
+  flex: none;
+  width: 3.2em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.what {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.delete,
+.confirm,
+.cancel {
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+}
+
+.delete {
+  color: var(--danger);
+}
+
+.confirm {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+  font-weight: 600;
+}
+
+.empty {
+  color: var(--muted);
+}
