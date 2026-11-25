@@ -1,0 +1,66 @@
+.page {
+  max-width: 420px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.intro {
+  margin: 8vh 0 28px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.6rem, 12vw, 3.4rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.04em;
+}
+
+.levels {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.levels span {
+  width: 14px;
+  height: 40px;
+  border-radius: 7px;
+  background: var(--caffeine-dim);
+  position: relative;
+  overflow: hidden;
+}
+
+.levels span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 65%;
+  background: var(--caffeine);
+}
+
+.levels span + span {
+  background: var(--nicotine-dim);
+}
+
+.levels span + span::after {
+  height: 40%;
+  background: var(--nicotine);
+}
+
+.lead {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 32ch;
+}
