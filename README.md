@@ -27,3 +27,4 @@ npm run dev                  # http://localhost:3000
 - Iga muudatus algab issue'st, branch on `<tüüp>/<issue nr>-<lühinimi>` (nt `feat/4-today-page`).
 - Commitid [Angulari formaadis](https://www.conventionalcommits.org/): `feat(ui): ...`, `fix: ...`, `test: ...`.
 - Main'i otse ei pushi keegi: PR, teise liikme review, siis merge.
+- GitHub Actions käivitab igas PR-is **App checks** (lint, typecheck, testid, build) ja kui PR muudab kausta `supabase/`, ka **Database tests** (pgTAP). Punase kontrolliga PR-i ei merge'ita.
