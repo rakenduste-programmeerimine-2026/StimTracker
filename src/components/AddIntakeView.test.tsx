@@ -30,6 +30,8 @@ describe("AddIntakeView", () => {
 
   it("adds an intake from the manual form", async () => {
     render(<AddIntakeView />);
+    expect(screen.queryByLabelText("Kogus (mg)")).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Muu kogus või aeg" }));
     await userEvent.type(screen.getByLabelText("Kogus (mg)"), "200");
     await userEvent.click(screen.getByRole("button", { name: "Lisa" }));
 

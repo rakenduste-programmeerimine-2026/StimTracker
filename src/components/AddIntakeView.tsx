@@ -12,6 +12,7 @@ const TOAST_MS = 5000;
 
 export default function AddIntakeView() {
   const [lastAdded, setLastAdded] = useState<Intake | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (!lastAdded) return;
@@ -32,24 +33,36 @@ export default function AddIntakeView() {
     <>
       <h1 className={styles.title}>Lisa</h1>
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Kiirvalik</h2>
-        <PresetButtons
-          onPick={(preset) =>
-            add({
-              substance: preset.substance,
-              amountMg: preset.amountMg,
-              label: preset.label,
-              takenAt: new Date().toISOString(),
-            })
-          }
-        />
-      </section>
+      <PresetButtons
+        onPick={(preset) =>
+          add({
+            substance: preset.substance,
+            amountMg: preset.amountMg,
+            label: preset.label,
+            takenAt: new Date().toISOString(),
+          })
+        }
+      />
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Käsitsi</h2>
-        <IntakeForm onSubmit={(intake) => add({ ...intake, takenAt: intake.takenAt.toISOString() })} />
-      </section>
+      <div className={styles.more}>
+        <button
+          type="button"
+          className={styles.moreButton}
+          aria-expanded={showForm}
+          aria-controls="manual-intake"
+          onClick={() => setShowForm((open) => !open)}
+        >
+          Muu kogus või aeg
+          <svg className={styles.chevron} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        {showForm && (
+          <div id="manual-intake" className={styles.formWrap}>
+            <IntakeForm onSubmit={(intake) => add({ ...intake, takenAt: intake.takenAt.toISOString() })} />
+          </div>
+        )}
+      </div>
 
       <div role="status" aria-live="polite">
         {lastAdded && (
