@@ -1,0 +1,39 @@
+.title {
+  margin: 0 0 12px;
+  font-size: 1.4rem;
+}
+
+.section + .section {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.toast {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(var(--nav-height) + 12px);
+  z-index: 20;
+  max-width: 528px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--text);
+  color: #fff;
+}
+
+.undo {
+  border: 0;
+  background: none;
+  color: #9fd3c3;
+  font-weight: 700;
+  cursor: pointer;
+}
