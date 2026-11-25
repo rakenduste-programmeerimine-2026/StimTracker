@@ -63,7 +63,7 @@ export default function IntakeForm({ onSubmit, now = () => new Date() }: Props) 
         <legend className={styles.legend}>Aine</legend>
         <div className={styles.choices}>
           {SUBSTANCES.map((substance) => (
-            <label key={substance} className={styles.choice}>
+            <label key={substance} className={`${styles.choice} ${styles[substance]}`}>
               <input
                 type="radio"
                 name="substance"
