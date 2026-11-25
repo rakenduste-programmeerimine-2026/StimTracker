@@ -15,7 +15,7 @@ export type Preset = {
 };
 
 export const PRESETS: readonly Preset[] = [
-  { id: "espresso", label: "Espresso", substance: "caffeine", amountMg: 63, size: "1 shot" },
+  { id: "espresso", label: "Espresso", substance: "caffeine", amountMg: 63, size: "30 ml" },
   { id: "coffee", label: "Kohv", substance: "caffeine", amountMg: 95, size: "tass, 240 ml" },
   { id: "energy-drink", label: "Energiajook", substance: "caffeine", amountMg: 80, size: "250 ml" },
   { id: "black-tea", label: "Must tee", substance: "caffeine", amountMg: 47, size: "tass, 240 ml" },
