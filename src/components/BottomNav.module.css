@@ -1,0 +1,38 @@
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  height: var(--nav-height);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.list {
+  display: flex;
+  max-width: 560px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  flex: 1;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.active {
+  color: var(--accent);
+  font-weight: 700;
+}

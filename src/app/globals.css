@@ -2,12 +2,37 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg: #f6f4f0;
+  --surface: #ffffff;
+  --text: #1f1d1a;
+  --muted: #6b665e;
+  --border: #e4e0d8;
+  --accent: #2f5d50;
+  --danger: #b3261e;
+  --caffeine: #8a5a2b;
+  --caffeine-soft: #f3e7da;
+  --nicotine: #3d5a80;
+  --nicotine-soft: #e1e8f2;
+  --radius: 14px;
+  --nav-height: 64px;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.4;
+}
+
+button,
+input,
+select {
+  font: inherit;
 }
