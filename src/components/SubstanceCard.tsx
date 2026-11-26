@@ -1,15 +1,24 @@
 import { formatAmount, formatMg, SUBSTANCE_LABEL } from "@/lib/intake/labels";
 import type { SubstanceSummary } from "@/lib/intake/today";
+import { limitStatus } from "@/lib/settings/limits";
 import styles from "./SubstanceCard.module.css";
 
 // A tall level that drains as the substance leaves the body: full right
 // after a dose, half-way after one half-life.
-export default function SubstanceCard({ summary }: { summary: SubstanceSummary }) {
+type Props = {
+  summary: SubstanceSummary;
+  // Daily limit from the settings page, null for none.
+  limitMg?: number | null;
+};
+
+export default function SubstanceCard({ summary, limitMg = null }: Props) {
   const { substance, count, takenMg, remainingMg, remainingShare } = summary;
   const name = SUBSTANCE_LABEL[substance];
+  const limit = limitStatus(takenMg, limitMg);
   const percent = remainingShare === null ? 0 : Math.round(remainingShare * 100);
   // Text that sits on top of the solid level switches to the contrast colour.
-  const gaugeClass = [styles.gauge, percent >= 72 && styles.readingOnFill, percent >= 14 && styles.nameOnFill]
+  // The reading is near the top, so only an almost full level covers it.
+  const gaugeClass = [styles.gauge, percent >= 92 && styles.readingOnFill, percent >= 70 && styles.captionOnFill, percent >= 14 && styles.nameOnFill]
     .filter(Boolean)
     .join(" ");
 
@@ -36,6 +45,29 @@ export default function SubstanceCard({ summary }: { summary: SubstanceSummary }
           {name}
         </h2>
       </div>
+      {limit.level !== "none" && limit.limitMg !== null && (
+        <div className={`${styles.limit} ${styles[limit.level] ?? ""}`}>
+          <div
+            className={styles.limitBar}
+            role="meter"
+            aria-label={`${name}: päevalimiidist kasutatud`}
+            aria-valuemin={0}
+            aria-valuemax={limit.limitMg}
+            aria-valuenow={Math.round(takenMg)}
+            aria-valuetext={`${formatAmount(takenMg)} / ${formatMg(limit.limitMg)}`}
+          >
+            <span style={{ width: `${Math.min(1, limit.share ?? 0) * 100}%` }} />
+          </div>
+          <p className={styles.limitText}>
+            <span>
+              {formatAmount(takenMg)} / {formatMg(limit.limitMg)}
+            </span>
+            <strong>
+              {limit.level === "over" ? `${formatMg(limit.overMg)} üle limiidi` : `${formatMg(limit.leftMg)} jäänud`}
+            </strong>
+          </p>
+        </div>
+      )}
       {count > 0 && (
         <dl className={styles.facts}>
           <div>

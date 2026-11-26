@@ -59,7 +59,7 @@
 }
 
 .readingOnFill .value,
-.readingOnFill .caption {
+.captionOnFill .caption {
   color: var(--on-accent);
 }
 
@@ -98,4 +98,50 @@
   margin: 0;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
+}
+
+/* Daily limit: a thin bar under the gauge, warning colours near and over. */
+.limit {
+  margin: 14px 4px 0;
+}
+
+.limitBar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.limitBar span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--tone);
+}
+
+.limitText {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.limitText strong {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.near .limitText strong {
+  color: var(--caffeine);
+}
+
+.over .limitBar span {
+  background: var(--danger);
+}
+
+.over .limitText strong {
+  color: var(--danger);
 }
