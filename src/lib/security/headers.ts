@@ -1,3 +1,7 @@
+// Relative import on purpose: next.config.ts loads this file, and the "@/"
+// alias does not work there.
+import { contentSecurityPolicy, type CspOptions } from "./csp";
+
 // HTTP headers that make the browser stricter with the app. Sent on every
 // response by next.config.ts.
 
@@ -15,3 +19,9 @@ export const SECURITY_HEADERS: Header[] = [
   // A window opened from another site cannot reach into the app.
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
+
+// All security headers for one environment: the fixed ones above plus the
+// Content Security Policy, which depends on dev mode and the Supabase URL.
+export function securityHeaders(options: CspOptions): Header[] {
+  return [...SECURITY_HEADERS, { key: "Content-Security-Policy", value: contentSecurityPolicy(options) }];
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SECURITY_HEADERS } from "@/lib/security/headers";
+import { SECURITY_HEADERS, securityHeaders } from "@/lib/security/headers";
 
 const value = (key: string) => SECURITY_HEADERS.find((header) => header.key === key)?.value;
 
@@ -25,5 +25,14 @@ describe("SECURITY_HEADERS", () => {
   it("lists every header once", () => {
     const keys = SECURITY_HEADERS.map((header) => header.key.toLowerCase());
     expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+describe("securityHeaders", () => {
+  it("adds the Content Security Policy to the fixed headers", () => {
+    const headers = securityHeaders({ dev: false });
+
+    expect(headers).toEqual(expect.arrayContaining(SECURITY_HEADERS));
+    expect(headers.find((header) => header.key === "Content-Security-Policy")?.value).toMatch(/^default-src 'self'/);
   });
 });
