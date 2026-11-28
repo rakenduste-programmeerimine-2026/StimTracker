@@ -18,4 +18,8 @@ describe("next.config headers", () => {
     expect(rules[0].source).toBe("/:path*");
     expect(rules[0].headers).toEqual(expect.arrayContaining(SECURITY_HEADERS));
   });
+
+  it("does not send the X-Powered-By header", () => {
+    expect(nextConfig.poweredByHeader).toBe(false);
+  });
 });
