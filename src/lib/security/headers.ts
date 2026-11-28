@@ -20,8 +20,19 @@ export const SECURITY_HEADERS: Header[] = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
-// All security headers for one environment: the fixed ones above plus the
-// Content Security Policy, which depends on dev mode and the Supabase URL.
+// Tells the browser to use only https for this site for two years, so a
+// first plain-http request cannot be intercepted. Browsers ignore it on plain
+// http, so it does no harm to `next start` on localhost; it is still left
+// out in development.
+export const HSTS_HEADER: Header = { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" };
+
+// All security headers for one environment: the fixed ones above, the
+// Content Security Policy (depends on dev mode and the Supabase URL) and,
+// outside development, HSTS.
 export function securityHeaders(options: CspOptions): Header[] {
-  return [...SECURITY_HEADERS, { key: "Content-Security-Policy", value: contentSecurityPolicy(options) }];
+  return [
+    ...SECURITY_HEADERS,
+    { key: "Content-Security-Policy", value: contentSecurityPolicy(options) },
+    ...(options.dev ? [] : [HSTS_HEADER]),
+  ];
 }
